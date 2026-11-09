@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Qwei: Pay. Send. Grow.</title>
+<meta name="description" content="Qwei is a mobile payments app for Nigeria. Scan to pay, get paid with your own QR code, and tap phones together with NFC to exchange payment requests.">
+<meta name="theme-color" content="#043927">
+<meta property="og:title" content="Qwei: Pay. Send. Grow.">
+<meta property="og:description" content="Scan a code, pay in seconds. Share your own QR to get paid. Every transfer is confirmed on the server and guarded by your PIN or fingerprint.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 34 34'%3E%3Crect width='34' height='34' rx='10' fill='%2384E4B6'/%3E%3Ccircle cx='16.2' cy='15.2' r='8.2' fill='none' stroke='%23043927' stroke-width='3.1'/%3E%3Cline x1='20' y1='19.5' x2='25.5' y2='25.5' stroke='%23043927' stroke-width='3.4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --forest: #043927;
+    --emerald: #0A5C43;
+    --mint: #84E4B6;
+    --sun: #F5C04A;
+    --paper: #F6FAF7;
+    --surface: #FFFFFF;
+    --tint: #E8F8F2;
+    --ink: #10201A;
+    --ink-soft: #4B5B54;
+    --line: #D9E5DF;
+    --display: "Bricolage Grotesque", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+    --body: "Instrument Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #07130E; --surface: #0D1F17; --tint: #0F2A1F;
+      --ink: #EAF4EE; --ink-soft: #A3B8AD; --line: #1B3328;
+    }
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  * { margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; scroll-padding-top: 16px; }
+  body {
+    font-family: var(--body); font-size: 17px; line-height: 1.6;
+    color: var(--ink); background: var(--paper);
+    -webkit-font-smoothing: antialiased;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  a { color: inherit; }
+  :focus-visible { outline: 3px solid var(--sun); outline-offset: 3px; border-radius: 6px; }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 22px; }
+  h1, h2, h3 { font-family: var(--display); line-height: 1.05; letter-spacing: -.02em; }
+  .skip { position: absolute; left: -999px; top: 8px; background: var(--sun); color: var(--forest); padding: 10px 16px; border-radius: 8px; z-index: 10; font-weight: 600; }
+  .skip:focus { left: 8px; }
+
+  /* ---------- hero ---------- */
+  .hero {
+    background: radial-gradient(120% 90% at 85% 10%, #0d6e50 0%, var(--emerald) 38%, var(--forest) 100%);
+    color: #fff; position: relative; overflow: hidden;
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+  .nav { display: flex; align-items: center; gap: 12px; padding: 22px 0; }
+  .nav .word { font-family: var(--display); font-weight: 800; font-size: 24px; letter-spacing: -.01em; }
+  .nav .links { margin-left: auto; display: flex; gap: 22px; font-size: 15px; font-weight: 500; }
+  .nav .links a { text-decoration: none; opacity: .82; }
+  .nav .links a:hover { opacity: 1; text-decoration: underline; text-underline-offset: 5px; }
+  .hero-grid { display: grid; grid-template-columns: 1.1fr .9fr; gap: 40px; align-items: end; padding-top: 40px; }
+  .hero h1 { font-size: clamp(48px, 8.4vw, 96px); font-weight: 800; line-height: .95; }
+  .hero h1 span { display: block; }
+  .hero .sub { margin-top: 24px; max-width: 44ch; font-size: 18px; color: rgba(255,255,255,.84); }
+  .badge {
+    display: inline-flex; align-items: center; gap: 8px; margin-top: 26px;
+    font-size: 14px; font-weight: 600; color: var(--mint);
+    border: 1px solid rgba(132,228,182,.4); padding: 7px 14px; border-radius: 999px;
+  }
+  .badge i { width: 8px; height: 8px; border-radius: 50%; background: var(--mint); }
+  .cta-row { display: flex; flex-wrap: wrap; gap: 12px; margin: 22px 0 56px; }
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; min-height: 48px;
+    padding: 12px 24px; border-radius: 14px; font-weight: 600; font-size: 16px;
+    text-decoration: none; border: 0; cursor: pointer; font-family: inherit;
+    transition: transform .15s ease, filter .15s ease;
+  }
+  .btn:active { transform: scale(.97); }
+  .btn.mint { background: var(--mint); color: var(--forest); }
+  .btn.mint:hover { filter: brightness(1.06); }
+  .btn.line { border: 1.5px solid rgba(255,255,255,.45); color: #fff; }
+  .btn.line:hover { background: rgba(255,255,255,.08); }
+
+  /* phone: the one memorable object */
+  .phone-wrap { display: flex; justify-content: center; align-self: end; }
+  .phone {
+    width: 292px; height: 540px; border: 9px solid #050a08; border-bottom: 0;
+    border-radius: 44px 44px 0 0; background: var(--forest);
+    box-shadow: 0 -10px 70px rgba(132,228,182,.18), 0 30px 80px rgba(0,0,0,.4);
+    padding: 22px 18px 0; overflow: hidden; position: relative;
+  }
+  .phone .bar { display: flex; justify-content: space-between; font-size: 12px; opacity: .7; }
+  .phone .req { margin-top: 22px; font-size: 13px; opacity: .75; }
+  .phone .who { font-family: var(--display); font-size: 22px; font-weight: 700; line-height: 1.15; }
+  .phone .amt { font-family: var(--display); font-size: 44px; font-weight: 800; margin: 10px 0 14px; letter-spacing: -.03em; }
+  .qr {
+    background: #fff; border-radius: 18px; padding: 14px; width: 168px; height: 168px;
+    display: grid; grid-template-columns: repeat(21, 1fr); gap: 0; margin: 0 auto;
+  }
+  .qr b { background: transparent; }
+  .qr b.on { background: #043927; }
+  .phone .pin {
+    position: absolute; left: 18px; right: 18px; bottom: 0; background: var(--tint); color: var(--forest);
+    border-radius: 22px 22px 0 0; padding: 16px 18px 26px; font-size: 13px; font-weight: 600;
+  }
+  .phone .pin div { display: flex; gap: 8px; margin-top: 8px; }
+  .phone .pin i { width: 14px; height: 14px; border-radius: 50%; background: var(--emerald); }
+  .phone .pin i.off { background: transparent; border: 2px solid var(--emerald); }
+
+  /* ---------- sections ---------- */
+  section { padding: 88px 0 0; }
+  h2 { font-size: clamp(32px, 5vw, 52px); font-weight: 800; max-width: 18ch; }
+  .lead { margin-top: 16px; color: var(--ink-soft); max-width: 58ch; }
+
+  .ways { display: grid; grid-template-columns: 1.2fr 1fr; grid-template-rows: auto auto; gap: 18px; margin-top: 40px; }
+  .way { border-radius: 28px; padding: 32px; }
+  .way h3 { font-size: 28px; font-weight: 800; }
+  .way p { margin-top: 10px; max-width: 40ch; }
+  .way.pay { grid-row: span 2; background: var(--forest); color: #fff; display: flex; flex-direction: column; justify-content: space-between; min-height: 420px; }
+  .way.pay p { color: rgba(255,255,255,.82); }
+  .way.pay .big { font-family: var(--display); font-size: clamp(80px, 12vw, 140px); line-height: .8; font-weight: 800; color: var(--mint); letter-spacing: -.05em; }
+  .way.get { background: #FFF1C9; color: #3a2a00; }
+  .way.tap { background: #DCE6FF; color: #14234d; }
+  .way.get p, .way.tap p { opacity: .85; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .way.get { background: #3a2f10; color: #FBE9B3; }
+    :root:not([data-theme="light"]) .way.tap { background: #172444; color: #D5E0FF; }
+  }
+
+  /* link builder */
+  .lab { margin-top: 36px; display: grid; grid-template-columns: 1fr 1fr; gap: 0; border: 1px solid var(--line); border-radius: 28px; overflow: hidden; background: var(--surface); }
+  .lab form { padding: 32px; display: grid; gap: 16px; align-content: start; }
+  .lab label { font-weight: 600; font-size: 15px; display: grid; gap: 6px; }
+  .lab input {
+    font: inherit; padding: 13px 14px; border-radius: 12px; border: 1.5px solid var(--line);
+    background: var(--paper); color: var(--ink); min-height: 48px;
+  }
+  .lab input:focus-visible { outline-offset: 1px; border-color: var(--emerald); }
+  .lab .out { background: var(--tint); padding: 32px; display: grid; gap: 14px; align-content: start; }
+  .lab .out h3 { font-size: 22px; font-weight: 700; }
+  .lab code {
+    display: block; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12.5px;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px;
+    word-break: break-all; line-height: 1.5; max-height: 118px; overflow: auto;
+  }
+  .lab .row { display: flex; gap: 10px; flex-wrap: wrap; }
+  .btn.dark { background: var(--emerald); color: #fff; }
+  .btn.quiet { background: var(--surface); color: var(--ink); border: 1.5px solid var(--line); }
+  .fine { font-size: 14px; color: var(--ink-soft); }
+
+  /* steps (real sequence) */
+  .steps { margin-top: 40px; list-style: none; counter-reset: s; display: grid; gap: 0; border-left: 2px solid var(--line); margin-left: 18px; }
+  .steps li { counter-increment: s; position: relative; padding: 0 0 34px 38px; }
+  .steps li::before {
+    content: counter(s); position: absolute; left: -19px; top: -2px; width: 36px; height: 36px; border-radius: 50%;
+    background: var(--emerald); color: #fff; display: grid; place-items: center; font-weight: 700; font-family: var(--display);
+  }
+  .steps h3 { font-size: 22px; font-weight: 700; }
+  .steps p { color: var(--ink-soft); max-width: 60ch; margin-top: 4px; }
+
+  /* can / cannot */
+  .duo { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 36px; }
+  .duo > div { border-radius: 24px; padding: 28px; border: 1px solid var(--line); background: var(--surface); }
+  .duo h3 { font-size: 22px; font-weight: 700; margin-bottom: 12px; }
+  .duo ul { list-style: none; display: grid; gap: 10px; }
+  .duo li { padding-left: 28px; position: relative; font-size: 16px; }
+  .duo .yes li::before { content: ""; position: absolute; left: 0; top: 7px; width: 14px; height: 8px; border-left: 3px solid var(--emerald); border-bottom: 3px solid var(--emerald); transform: rotate(-45deg); }
+  .duo .no li::before, .duo .no li::after { content: ""; position: absolute; left: 1px; top: 13px; width: 15px; height: 3px; background: #B45309; border-radius: 2px; }
+  .duo .no li::before { transform: rotate(45deg); } .duo .no li::after { transform: rotate(-45deg); }
+
+  .status { margin-top: 36px; background: var(--forest); color: #fff; border-radius: 28px; padding: 36px 32px; }
+  .status h3 { font-size: 28px; font-weight: 800; }
+  .status p { margin-top: 10px; color: rgba(255,255,255,.82); max-width: 66ch; }
+  .status .now { margin-top: 18px; color: var(--mint); font-weight: 600; }
+
+  details { border-top: 1px solid var(--line); padding: 20px 0; }
+  details:last-of-type { border-bottom: 1px solid var(--line); }
+  summary { cursor: pointer; font-family: var(--display); font-weight: 700; font-size: 20px; list-style: none; display: flex; justify-content: space-between; gap: 16px; }
+  summary::-webkit-details-marker { display: none; }
+  summary::after { content: "+"; font-size: 26px; line-height: 1; transition: transform .2s; }
+  details[open] summary::after { transform: rotate(45deg); }
+  details p { margin-top: 10px; color: var(--ink-soft); max-width: 64ch; }
+  .faq { margin-top: 32px; }
+
+  footer { margin-top: 96px; background: var(--forest); color: #fff; padding: 40px 0 calc(34px + env(safe-area-inset-bottom, 0px)); }
+  footer .grid { display: flex; justify-content: space-between; gap: 18px; flex-wrap: wrap; font-size: 14px; color: rgba(255,255,255,.75); }
+  footer .note { color: #fff; font-weight: 600; margin-bottom: 18px; max-width: 70ch; font-size: 15px; }
+
+  @media (max-width: 820px) {
+    .hero-grid { grid-template-columns: 1fr; padding-top: 18px; }
+    .cta-row { margin-bottom: 36px; }
+    .ways, .lab, .duo { grid-template-columns: 1fr; }
+    .way.pay { grid-row: auto; min-height: 300px; }
+    .nav .links { display: none; }
+    section { padding-top: 64px; }
+  }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { transition: none !important; } }
+</style>
+</head>
+<body>
+<a class="skip" href="#features">Skip to content</a>
+
+<header class="hero">
+  <div class="wrap">
+    <nav class="nav" aria-label="Main">
+      <svg width="38" height="38" viewBox="0 0 34 34" aria-hidden="true">
+        <rect width="34" height="34" rx="10" fill="#84E4B6"/>
+        <circle cx="16.2" cy="15.2" r="8.2" fill="none" stroke="#043927" stroke-width="3.1"/>
+        <line x1="20" y1="19.5" x2="25.5" y2="25.5" stroke="#043927" stroke-width="3.4" stroke-linecap="round"/>
+      </svg>
+      <span class="word">qwei</span>
+      <div class="links">
+        <a href="#features">What it does</a>
+        <a href="#links">Payment links</a>
+        <a href="#safety">Safety</a>
+        <a href="#faq">Questions</a>
+      </div>
+    </nav>
+
+    <div class="hero-grid">
+      <div>
+        <h1><span>Pay.</span><span>Send.</span><span>Grow.</span></h1>
+        <p class="sub">Scan a code and pay in seconds. Share your own QR to get paid back. Tap phones together with NFC to hand over a payment request. Every transfer is confirmed on the server and guarded by your PIN or fingerprint.</p>
+        <p class="badge"><i></i> Early access for Nigeria</p>
+        <div class="cta-row">
+          <a class="btn mint" href="#features">See what it does</a>
+          <a class="btn line" href="#links">Try a payment link</a>
+        </div>
+      </div>
+
+      <div class="phone-wrap">
+        <div class="phone" role="img" aria-label="Illustration of the Qwei app asking a person to confirm a payment of 12,500 naira with their PIN">
+          <div class="bar"><span>9:41</span><span>qwei</span></div>
+          <p class="req">Paying</p>
+          <p class="who">Mama Nkechi Provisions</p>
+          <p class="amt">₦12,500</p>
+          <div class="qr" id="qr" aria-hidden="true"></div>
+          <div class="pin">Enter your PIN to confirm
+            <div><i></i><i></i><i></i><i class="off"></i></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section id="features">
+    <div class="wrap">
+      <h2>Three ways money moves</h2>
+      <p class="lead">Fewer tabs, less guessing. The things you do most are one tap from the home screen.</p>
+      <div class="ways">
+        <article class="way pay">
+          <div class="big" aria-hidden="true">Scan</div>
+          <div>
+            <h3>Scan to Pay</h3>
+            <p>Point your camera at any Qwei code, personal or priced. Check the amount, then confirm with your PIN.</p>
+          </div>
+        </article>
+        <article class="way get">
+          <h3>Get Paid</h3>
+          <p>Share your personal QR anywhere. Set an amount if you want one, and you stay in control of when it expires.</p>
+        </article>
+        <article class="way tap">
+          <h3>Tap with NFC</h3>
+          <p>Hold two phones together to pass a payment request across. Nothing is charged by the tap itself.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="links">
+    <div class="wrap">
+      <h2>Payment links that open the app</h2>
+      <p class="lead">Every shared Qwei code is also an https link on this domain. Scan it with any camera and tap the result. With the app installed it opens straight to the payment details. Without it, you see a read-only preview.</p>
+
+      <div class="lab">
+        <form id="builder" autocomplete="off">
+          <label>Who is asking for money?
+            <input id="bName" value="Ada’s Kitchen" maxlength="60">
+          </label>
+          <label>Amount in naira
+            <input id="bAmt" type="number" inputmode="decimal" min="1" step="0.01" value="4500">
+          </label>
+          <p class="fine">This builds a sample link so you can see the preview page. It is a demo reference, not a real request.</p>
+        </form>
+        <div class="out">
+          <h3>Your sample link</h3>
+          <code id="bLink" aria-live="polite"></code>
+          <div class="row">
+            <a class="btn dark" id="bOpen" href="#" target="_blank" rel="noopener">Open preview page</a>
+            <button class="btn quiet" id="bCopy" type="button">Copy link</button>
+          </div>
+        </div>
+      </div>
+
+      <ol class="steps" aria-label="What happens when you tap a payment link">
+        <li><h3>Someone shares a code</h3><p>It can be a QR on a counter, a message, or a tap between two phones.</p></li>
+        <li><h3>You tap the link</h3><p>With Qwei installed, the app opens on the payment details. Without it, this site shows who is asking and how much.</p></li>
+        <li><h3>You review and confirm in the app</h3><p>Only inside Qwei, with your PIN or fingerprint, does a payment happen. The link never moves money.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <section id="safety">
+    <div class="wrap">
+      <h2>What Qwei does and doesn’t do</h2>
+      <div class="duo">
+        <div class="yes">
+          <h3>Does</h3>
+          <ul>
+            <li>Check every transfer on the server</li>
+            <li>Ask for your PIN or fingerprint before paying</li>
+            <li>Show the amount and recipient before you confirm</li>
+            <li>Log each naira in your activity feed in real time</li>
+          </ul>
+        </div>
+        <div class="no">
+          <h3>Doesn’t</h3>
+          <ul>
+            <li>Charge anything when you tap an NFC request</li>
+            <li>Process payments on this website</li>
+            <li>Pay automatically from a link or QR scan</li>
+            <li>Claim features that aren’t built yet</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="status">
+        <h3>Being built in the open</h3>
+        <p>Qwei is in active development. Wallet funding runs through a licensed Nigerian payment processor. Settlement, payouts and promos arrive after the processor account is fully verified.</p>
+        <p class="now">Shipping now: server-checked transfers, QR and deep links, NFC requests, PIN and fingerprint lock, real-time activity.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="faq">
+    <div class="wrap">
+      <h2>Questions people ask</h2>
+      <div class="faq">
+        <details><summary>Is Qwei available to download?</summary><p>The app works on Android today and the public release is coming soon. Until then, payment links show a preview page like the one above.</p></details>
+        <details><summary>Can someone take money by sending me a link?</summary><p>No. A link only opens the request. You see the details first and nothing is paid until you confirm inside the app with your PIN or fingerprint.</p></details>
+        <details><summary>What if a payment request has expired?</summary><p>The preview page tells you it has expired. Ask the sender for a new code or link.</p></details>
+        <details><summary>Does this website handle my money?</summary><p>Never. This site only explains Qwei and previews payment requests. Confirmations happen inside the app.</p></details>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p class="note">This website never processes payments. Confirmations happen only inside the Qwei app, secured by your PIN or biometrics.</p>
+    <div class="grid"><span>© 2026 Qwei</span><span>App available on Android. Public release coming soon.</span></div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  /* decorative QR-style pattern for the phone illustration (not scannable) */
+  var qr = document.getElementById('qr'), N = 21, seed = 7, html = '';
+  function rnd() { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; }
+  function finder(x, y) {
+    function box(ox, oy) {
+      var dx = x - ox, dy = y - oy;
+      if (dx < 0 || dy < 0 || dx > 6 || dy > 6) return null;
+      var edge = dx === 0 || dy === 0 || dx === 6 || dy === 6;
+      var core = dx >= 2 && dx <= 4 && dy >= 2 && dy <= 4;
+      return edge || core;
+    }
+    var r = box(0, 0); if (r !== null) return r;
+    r = box(N - 7, 0); if (r !== null) return r;
+    r = box(0, N - 7); return r;
+  }
+  for (var y = 0; y < N; y++) for (var x = 0; x < N; x++) {
+    var f = finder(x, y), on = f === null ? rnd() > 0.52 : f;
+    html += '<b' + (on ? ' class="on"' : '') + '></b>';
+  }
+  qr.innerHTML = html;
+
+  /* sample payment-link builder, same encoding the preview page reads */
+  var bName = document.getElementById('bName'), bAmt = document.getElementById('bAmt'),
+      bLink = document.getElementById('bLink'), bOpen = document.getElementById('bOpen'),
+      bCopy = document.getElementById('bCopy'), ref = 'QWEI-DEMO-' + Math.random().toString(36).slice(2, 8).toUpperCase();
+
+  function b64url(str) {
+    var bytes = new TextEncoder().encode(str), bin = '';
+    for (var i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+    return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  }
+  function build() {
+    var name = bName.value.trim() || 'Sample merchant';
+    var naira = parseFloat(bAmt.value), kobo = isFinite(naira) && naira > 0 ? Math.round(naira * 100) : 0;
+    var u = new URL('pay.html', window.location.href);
+    u.search = 'v=1&r=' + encodeURIComponent(ref) + '&n=' + b64url(name) + '&a=' + kobo + '&c=NGN&x=0';
+    bLink.textContent = u.href; bOpen.href = u.href;
+  }
+  bName.addEventListener('input', build); bAmt.addEventListener('input', build); build();
+  bCopy.addEventListener('click', function () {
+    var done = function () { bCopy.textContent = 'Link copied'; setTimeout(function () { bCopy.textContent = 'Copy link'; }, 1800); };
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(bLink.textContent).then(done, function () {});
+  });
+})();
+</script>
+</body>
+</html>
