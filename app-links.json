@@ -1,0 +1,10 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "com.qwei.qwei",
+    "sha256_cert_fingerprints": [
+      "9F:2A:EC:B1:64:51:4F:95:0D:BB:FA:8E:3E:76:91:E0:A2:69:1D:93:7A:AE:34:78:37:BA:38:E6:43:8B:CB:9C"
+    ]
+  }
+}]
