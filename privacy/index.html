@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Privacy Policy — Qwei</title>
+<meta name="description" content="What Qwei collects, where it lives, what we never do with it, and the choices you have.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --hero-dark: #043927;
+    --hero-emerald: #0A5C43;
+    --brand-mint: #84E4B6;
+    --pastel-mint: #E8F8F2;
+    --pastel-yellow: #FFF8E1;
+    --ink: #111827;
+    --ink-soft: #6B7280;
+    --hairline: #E5E7EB;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "Instrument Sans", -apple-system, "Segoe UI", Roboto, sans-serif;
+    color: var(--ink); background: #fff;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3, .display { font-family: "Bricolage Grotesque", "Instrument Sans", sans-serif; }
+  a { color: var(--hero-emerald); }
+  .topbar {
+    background: linear-gradient(160deg, var(--hero-dark) 0%, var(--hero-emerald) 100%);
+    color: #fff; padding: 22px 18px 30px;
+  }
+  .wrap { max-width: 780px; margin: 0 auto; padding: 0 18px; }
+  .topbar .brand {
+    display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 18px;
+  }
+  .topbar .brand a { color: #fff; text-decoration: none; display: flex; align-items: center; gap: 10px; }
+  .badge {
+    display: inline-block; margin-top: 18px;
+    background: rgba(255,255,255,.12); border: 1px solid rgba(132,228,182,.35);
+    color: var(--brand-mint); font-size: 12px; font-weight: 700; letter-spacing: .08em;
+    padding: 6px 13px; border-radius: 999px;
+  }
+  main { padding: 34px 0 48px; }
+  .meta { color: var(--ink-soft); font-size: 13.5px; margin-bottom: 26px; }
+  h1 { font-size: clamp(28px, 5vw, 38px); letter-spacing: -.01em; }
+  h2 { font-size: 20px; margin: 34px 0 10px; letter-spacing: -.01em; }
+  h3 { font-size: 16px; margin: 22px 0 8px; }
+  p, li { font-size: 15px; line-height: 1.65; color: #374151; }
+  ul, ol { padding-left: 22px; margin: 8px 0 14px; }
+  li { margin-bottom: 6px; }
+  .card {
+    background: var(--pastel-mint); border-radius: 16px; padding: 18px 20px; margin: 18px 0 26px;
+  }
+  .card b { color: var(--hero-dark); }
+  .note {
+    background: var(--pastel-yellow); border-radius: 14px; padding: 14px 18px; margin: 14px 0;
+    font-size: 13.5px; line-height: 1.6; color: #7C4A03;
+  }
+  table { border-collapse: collapse; width: 100%; margin: 12px 0 18px; font-size: 13.5px; }
+  th, td { border: 1px solid var(--hairline); padding: 8px 10px; text-align: left; vertical-align: top; }
+  th { background: #F9FAFB; font-weight: 600; }
+  .back { display: inline-block; margin-top: 40px; font-weight: 600; font-size: 14px; text-decoration: none; }
+  .rule { border-top: 1px solid var(--hairline); margin-top: 40px; padding-top: 18px; color: var(--ink-soft); font-size: 12.5px; }
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="wrap brand">
+    <a href="/">
+      <svg width="26" height="26" viewBox="0 0 34 34" aria-hidden="true">
+        <rect width="34" height="34" rx="10" fill="#84E4B6"/>
+        <circle cx="16.2" cy="15.2" r="8.2" fill="none" stroke="#043927" stroke-width="3.1"/>
+        <line x1="20" y1="19.5" x2="25.5" y2="25.5" stroke="#043927" stroke-width="3.4" stroke-linecap="round"/>
+      </svg>
+      qwei
+    </a>
+  </div>
+  <div class="wrap">
+    <span class="badge">PRIVACY POLICY</span>
+  </div>
+</header>
+
+<main class="wrap">
+  <h1>Privacy Policy</h1>
+  <p class="meta">Effective: 9 November 2026 · Applies to the Qwei Android app and qwei.pages.dev</p>
+
+  <div class="card">
+    <b>Short version.</b> We store what a payment app must have — your account details, your
+    balances and transaction history — on secured hosted infrastructure. Your PIN and
+    fingerprint settings never leave your phone. We never sell your data, we run no ad
+    trackers, and no money ever moves because a link was tapped or a code was scanned — it
+    moves only when you confirm.
+  </div>
+
+  <h2>1. What we collect</h2>
+  <h3>Account data (you provide)</h3>
+  <ul>
+    <li>Your name and email address, used to create and identify your account.</li>
+    <li>Your profile photo — shown when you receive or request money, and only to people
+    transacting with you. You can turn this off in the app (Profile → Show photo on codes).</li>
+  </ul>
+  <h3>Payment data (created as you use Qwei)</h3>
+  <ul>
+    <li>Wallet balance and transaction history: amount, counterparty, timestamp, status
+    (pending / successful / failed / expired), and the reference that ties a payment to the
+    server's verification result.</li>
+    <li>Payment requests you create, share or cancel (QR codes and their expiry).</li>
+  </ul>
+  <h3>Security data</h3>
+  <ul>
+    <li>Whether a payment PIN is set, and whether biometrics are enabled — as flag records
+    so the app knows to lock the payment flow. <b>The PIN itself is never stored on our
+    servers;</b> it lives in your device's secure storage and only a verification result
+    (not the secret) is used by the app.</li>
+    <li>Biometric matching and storage happen entirely on your device via the operating
+    system. We never receive fingerprints or face data.</li>
+  </ul>
+  <h3>Technical data</h3>
+  <ul>
+    <li>Your authenticated session token, so the app can talk to our server securely.</li>
+    <li>Diagnostics of failures in payment flows (for example, a network interruption
+    during a request). Error text may include times and references — never your PIN or
+    payment secrets.</li>
+  </ul>
+
+  <h2>2. When you fund your wallet</h2>
+  <p>
+    Wallet funding routes through a licensed Nigerian payment processor. When that flow is
+    live, your bank or card details are captured and handled <b>by the processor</b>. Qwei
+    does not receive, see, or store your card numbers, bank logins, or payment credentials —
+    only the outcome (paid / pending / failed) is recorded in your history.
+  </p>
+  <div class="note">
+    Honest status: funding rails and the processor connection are still being finalized
+    while Qwei builds toward public launch. This section describes how those flows will
+    work once released; until then, wallet funding isn't offered and the app only records
+    outcomes the server has actually verified.
+  </div>
+
+  <h2>3. Where your data lives</h2>
+  <table>
+    <tr><th>What</th><th>Where</th><th>Why</th></tr>
+    <tr><td>Account, balances, transactions, payment requests</td><td>Secured hosted database (Supabase)</td><td>The server — not your phone — is the truth for money records</td></tr>
+    <tr><td>Payment verification &amp; webhooks</td><td>Server-side functions</td><td>Verification must never depend on the client</td></tr>
+    <tr><td>Website &amp; shared payment links</td><td>Cloudflare Pages</td><td>Static hosting; these pages carry no personal data</td></tr>
+    <tr><td>Payment PIN, biometric preference, session token</td><td>Your device only</td><td>Secrets we can't see are secrets we can't leak</td></tr>
+  </table>
+
+  <h2>4. What we never do</h2>
+  <ul>
+    <li>We never sell your personal information, to anyone, ever.</li>
+    <li>We run no advertising trackers, no cross-app tracking, no behavioral profiling.</li>
+    <li>We never decide on our own that a payment "succeeded" — every outcome is reported
+    by the server. A connection drop during confirmation is treated as <i>unverified</i>,
+    not as money moved, and we will never show you success we can't stand behind.</li>
+  </ul>
+
+  <h2>5. Who can see what</h2>
+  <ul>
+    <li><b>People paying you:</b> your name, your profile photo (if enabled), and any amount
+    and expiry attached to a request you shared.</li>
+    <li><b>People you pay:</b> equivalently, their name and photo.</li>
+    <li><b>Service providers:</b> infrastructure and payment processor partners, only as
+    needed to operate Qwei.</li>
+    <li><b>Nobody else</b> — unless law compels us, and then we'll tell you where we legally
+    can.</li>
+  </ul>
+
+  <h2>6. Your choices and rights</h2>
+  <ul>
+    <li><b>Hide your balance</b> on the home screen at any time.</li>
+    <li><b>Turn off your photo</b> on shared codes from the Profile screen.</li>
+    <li><b>Change or remove your PIN</b>, and switch biometric login off, in Profile → Security.</li>
+    <li><b>Request your data or account deletion:</b> deletion tooling is coming soon ahead
+    of public launch — until then, write to the contact below and we will handle it manually.</li>
+    <li>Requests to access, correct or export your data follow the same channel.</li>
+  </ul>
+
+  <h2>7. Security</h2>
+  <p>
+    Traffic is encrypted in transit. Provider secrets and verification credentials live
+    only on our server — never inside the app, which is also why the app can walk you
+    confidently through a payment without ever holding the keys that move money. A payment
+    requires an explicit confirmation step (review → confirm → PIN or biometrics) with no
+    automatic or background charging.
+  </p>
+
+  <h2>8. This service is pre-launch</h2>
+  <p>
+    Qwei is in active development. Data practices may gain detail (for example, crash
+    analytics) before public launch — if so, this page will be updated and the date above
+    will change. Wallet balances during this period are real records processed the same way
+    as launch data.
+  </p>
+
+  <h2>9. Contact</h2>
+  <p>
+    <!-- TODO(owner): publish a support email / in-app support entry before public launch. -->
+    Questions or data requests: the in-app support entry (Profile) is coming soon; until it
+    ships, reach the Qwei team through the project's published channels. This page and the
+    practice it describes always win over older wording elsewhere.
+  </p>
+
+  <a class="back" href="/">← back to qwei home</a>
+  <div class="rule">qwei.pages.dev — this website never processes payments.</div>
+</main>
+</body>
+</html>
