@@ -1,0 +1,14 @@
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appID": "TEAMID.com.qwei.qwei",
+        "paths": ["/pay/*", "/pay"]
+      }
+    ]
+  },
+  "webcredentials": {
+    "apps": ["TEAMID.com.qwei.qwei"]
+  }
+}

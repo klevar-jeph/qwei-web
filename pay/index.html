@@ -79,10 +79,16 @@
   .ref code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; word-break: break-all; }
   .ref button { margin-left: auto; font: inherit; font-size: 12px; font-weight: 600; background: none; border: 1px solid var(--line); color: var(--ink); border-radius: 8px; padding: 4px 10px; cursor: pointer; flex-shrink: 0; }
 
+  .loading { margin-top: 30px; display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 20px 0 8px; }
+  .loading[hidden] { display: none; }
+  .spinner { width: 34px; height: 34px; border-radius: 50%; border: 3px solid var(--line); border-top-color: var(--emerald); animation: spin .8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading p { font-size: 14px; color: var(--ink-soft); }
+
   .bad h1 { font-family: var(--display); font-size: 26px; margin-top: 26px; line-height: 1.15; }
   .bad p { margin-top: 10px; color: var(--ink-soft); }
   [hidden] { display: none !important; }
-  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
 </style>
 </head>
 <body>
@@ -97,6 +103,12 @@
     <span class="tagline">Payment request</span>
   </div>
 
+  <!-- resolving a short /pay/{reference} link -->
+  <div class="loading" id="loading" hidden>
+    <div class="spinner" aria-hidden="true"></div>
+    <p>Checking this payment request…</p>
+  </div>
+
   <!-- valid request -->
   <div id="ok" hidden>
     <div class="who">
@@ -109,7 +121,17 @@
     <p class="timer" id="timer" hidden></p>
 
     <a class="cta" id="openApp" href="#">Open in Qwei</a>
-    <p class="miss" id="miss" hidden>Nothing opened? Qwei may not be installed yet. The Android app is coming soon to the public.</p>
+    <p class="miss" id="miss" hidden>Nothing opened? Qwei may not be installed yet.</p>
+
+    <!-- Store links: CONFIGURABLE. Leave a URL empty until the listing is
+         live — an empty store never renders a broken link; it shows the
+         honest "coming soon" line instead. -->
+    <div id="stores">
+      <a class="cta-alt" id="storeAndroid" href="#" hidden>Get it on Google Play</a>
+      <a class="cta-alt" id="storeIos" href="#" hidden>Download on the App Store</a>
+      <p class="miss" id="storeSoon" hidden>Qwei's public release is coming soon — the app stores will be linked here once it launches.</p>
+    </div>
+
     <a class="cta-alt" href="/">About Qwei</a>
 
     <div class="trust">
@@ -119,10 +141,11 @@
     <div class="ref"><span>Ref</span> <code id="refline"></code> <button type="button" id="copyRef">Copy</button></div>
   </div>
 
-  <!-- unreadable request -->
+  <!-- unreadable / unavailable request -->
   <div class="bad" id="bad" hidden>
-    <h1>This payment request could not be read</h1>
-    <p>The link may be damaged or out of date. Ask the sender to share their code again.</p>
+    <h1 id="badTitle">This payment request could not be read</h1>
+    <p id="badMsg">The link may be damaged or out of date. Ask the sender to share their code again.</p>
+    <a class="cta-alt" id="retry" href="" hidden>Try again</a>
     <a class="cta-alt" href="/">About Qwei</a>
   </div>
 
@@ -131,10 +154,23 @@
 
 <script>
 (function () {
-  var q = new URLSearchParams(window.location.search);
-  var v = q.get('v') || '', r = q.get('r') || '', n = q.get('n') || '',
-      a = q.get('a') || '', c = (q.get('c') || 'NGN').toUpperCase(), x = q.get('x') || '';
   var $ = function (id) { return document.getElementById(id); };
+  var REF_RE = /^QWEI-[A-Z0-9-]{6,64}$/;
+
+  // Public lookup endpoint: takes ONLY the opaque reference, returns the
+  // stored request (backend is the source of truth — nothing in the URL is
+  // trusted beyond the id).
+  var LOOKUP = 'https://ngmkreuhhxfmhnwkmrbg.supabase.co/functions/v1/pay-link-lookup';
+
+  // ===== CONFIG: store listings =========================================
+  // Fill these in once the listings exist. Empty string = not published
+  // yet; the page then shows an honest "coming soon" note instead of a
+  // dead store link. Android / iOS detection only reorders the buttons.
+  var STORES = {
+    android: '', // e.g. 'https://play.google.com/store/apps/details?id=com.qwei.qwei'
+    ios: ''      // e.g. 'https://apps.apple.com/app/qwei/id0000000000'
+  };
+  // ======================================================================
 
   function decodeName(raw) {
     if (!raw) return '';
@@ -150,65 +186,171 @@
   // Amount arrives in kobo (minor units).
   function formatAmount(koboRaw, currency) {
     var kobo = Number(koboRaw);
-    if (!koboRaw || !isFinite(kobo) || kobo <= 0) return null;
+    if (koboRaw === null || koboRaw === undefined || koboRaw === '' || !isFinite(kobo) || kobo <= 0) return null;
     kobo = Math.round(kobo);
     var symbol = currency === 'NGN' ? '\u20A6' : (/^[A-Z]{3}$/.test(currency) ? currency : 'NGN') + '\u00A0';
     return symbol + Math.floor(kobo / 100).toLocaleString('en-NG') + '.' + String(kobo % 100).padStart(2, '0');
   }
 
-  var name = decodeName(n).trim();
-  var valid = v === '1' && /^QWEI-[A-Z0-9-]{6,64}$/.test(r) && name.length > 0;
+  function showBad(title, msg, retry) {
+    $('loading').hidden = true;
+    $('badTitle').textContent = title;
+    $('badMsg').textContent = msg;
+    $('retry').hidden = !retry;
+    $('bad').hidden = false;
+    document.title = title + ' | Qwei';
+  }
 
-  if (!valid) { $('bad').hidden = false; return; }
+  function renderStores() {
+    var android = STORES.android, ios = STORES.ios;
+    var ua = navigator.userAgent || '';
+    var isIos = /iPhone|iPad|iPod/i.test(ua);
+    var isAndroid = /Android/i.test(ua);
+    // Platform-appropriate store first, but both stay reachable.
+    var order = isIos ? [['ios', ios], ['android', android]]
+              : isAndroid ? [['android', android], ['ios', ios]]
+              : [['android', android], ['ios', ios]];
+    var host = $('stores');
+    order.forEach(function (pair) {
+      if (pair[1]) {
+        var el = $(pair[0] === 'ios' ? 'storeIos' : 'storeAndroid');
+        el.href = pair[1];
+        el.hidden = false;
+        host.appendChild(el);
+      }
+    });
+    var any = !!(android || ios);
+    $('storeSoon').hidden = any;
+  }
 
-  $('ok').hidden = false;
-  $('name').textContent = name;
-  $('avatar').textContent = Array.from(name)[0].toUpperCase();
-  document.title = 'Payment request from ' + name + ' | Qwei';
+  // Shared renderer for a resolved request. deepLink is the qwei:// form
+  // the app handles; expiresUnix is seconds (0 = never).
+  function showOk(o) {
+    $('loading').hidden = true;
+    $('ok').hidden = false;
+    $('name').textContent = o.name;
+    $('avatar').textContent = Array.from(o.name)[0].toUpperCase();
+    document.title = 'Payment request from ' + o.name + ' | Qwei';
 
-  var amt = formatAmount(a, c), amountEl = $('amount');
-  if (amt) { amountEl.textContent = amt; }
-  else { amountEl.className = 'amount soft'; amountEl.textContent = 'The amount will be confirmed in Qwei.'; }
+    var amountEl = $('amount');
+    if (o.amountText) { amountEl.textContent = o.amountText; }
+    else { amountEl.className = 'amount soft'; amountEl.textContent = 'The amount will be confirmed in Qwei.'; }
 
-  $('refline').textContent = r;
-  $('copyRef').addEventListener('click', function () {
-    var b = this;
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(r).then(function () {
-        b.textContent = 'Copied'; setTimeout(function () { b.textContent = 'Copy'; }, 1600);
-      }, function () {});
+    $('refline').textContent = o.ref;
+    $('copyRef').onclick = function () {
+      var b = this;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(o.ref).then(function () {
+          b.textContent = 'Copied'; setTimeout(function () { b.textContent = 'Copy'; }, 1600);
+        }, function () {});
+      }
+    };
+
+    var btn = $('openApp');
+    btn.href = o.deepLink;
+
+    var exp = o.expiresUnix, timer = $('timer'), expiredEl = $('expired'), tick;
+    function setExpired() {
+      expiredEl.hidden = false; timer.hidden = true;
+      btn.setAttribute('aria-disabled', 'true'); btn.removeAttribute('href'); btn.textContent = 'Request expired';
+      if (tick) clearInterval(tick);
     }
-  });
+    function update() {
+      var left = Math.floor(exp - Date.now() / 1000);
+      if (left <= 0) { setExpired(); return; }
+      var h = Math.floor(left / 3600), m = Math.floor((left % 3600) / 60), s = left % 60;
+      timer.hidden = false;
+      timer.textContent = 'Expires in ' + (h ? h + 'h ' : '') + (h || m ? m + 'm ' : '') + (h ? '' : s + 's');
+    }
+    if (isFinite(exp) && exp > 0) { update(); tick = setInterval(update, 1000); }
 
-  // Same deep link as before: qwei://pay + the original query string.
-  var btn = $('openApp');
-  btn.href = 'qwei://pay' + window.location.search;
-
-  // Expiry is unix seconds; 0 or missing means no expiry.
-  var exp = Number(x), timer = $('timer'), expiredEl = $('expired'), tick;
-  function setExpired() {
-    expiredEl.hidden = false; timer.hidden = true;
-    btn.setAttribute('aria-disabled', 'true'); btn.removeAttribute('href'); btn.textContent = 'Request expired';
-    if (tick) clearInterval(tick);
+    // If the app link does nothing, the page stays visible: show a gentle
+    // hint plus the (configurable) store fallbacks.
+    btn.addEventListener('click', function () {
+      var left = false, onHide = function () { if (document.hidden) left = true; };
+      document.addEventListener('visibilitychange', onHide);
+      setTimeout(function () {
+        document.removeEventListener('visibilitychange', onHide);
+        if (!left) $('miss').hidden = false;
+      }, 1800);
+    });
   }
-  function update() {
-    var left = Math.floor(exp - Date.now() / 1000);
-    if (left <= 0) { setExpired(); return; }
-    var h = Math.floor(left / 3600), m = Math.floor((left % 3600) / 60), s = left % 60;
-    timer.hidden = false;
-    timer.textContent = 'Expires in ' + (h ? h + 'h ' : '') + (h || m ? m + 'm ' : '') + (h ? '' : s + 's');
-  }
-  if (isFinite(exp) && exp > 0) { update(); tick = setInterval(update, 1000); }
 
-  // If the app link does nothing, the page stays visible: show a gentle hint.
-  btn.addEventListener('click', function () {
-    var left = false, onHide = function () { if (document.hidden) left = true; };
-    document.addEventListener('visibilitychange', onHide);
-    setTimeout(function () {
-      document.removeEventListener('visibilitychange', onHide);
-      if (!left) $('miss').hidden = false;
-    }, 1800);
-  });
+  // ---- Short opaque link: /pay/{reference} (or ?r= with no payload) ----
+  function pathReference() {
+    var m = window.location.pathname.match(/^\/pay\/([^/]+)\/?$/);
+    if (!m) return '';
+    var ref = decodeURIComponent(m[1]);
+    return REF_RE.test(ref) ? ref : '';
+  }
+
+  function statusMessage(status) {
+    switch (status) {
+      case 'expired': return ['This request has expired', 'The payment request behind this link is no longer active. Ask the sender for a new one.'];
+      case 'cancelled': return ['This request was cancelled', 'The recipient cancelled this payment request. Ask them for a new link if you still want to pay.'];
+      case 'paid': return ['Already paid', 'This payment request has already been completed — there is nothing left to pay.'];
+      default: return ['This payment link could not be found', 'The link may be damaged or out of date. Ask the sender to share their code or link again.'];
+    }
+  }
+
+  function resolveShortLink(ref) {
+    $('loading').hidden = false;
+    fetch(LOOKUP, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ reference: ref })
+    }).then(function (res) { return res.json(); }).then(function (data) {
+      if (!data || data.ok !== true || data.status !== 'active') {
+        var pair = statusMessage(data && data.status);
+        showBad(pair[0], pair[1], false);
+        return;
+      }
+      var expiresUnix = 0;
+      if (data.expires_at) {
+        var t = Date.parse(data.expires_at);
+        if (isFinite(t)) expiresUnix = Math.floor(t / 1000);
+      }
+      showOk({
+        name: String(data.recipient_name || '').trim() || 'Unknown sender',
+        amountText: formatAmount(data.amount_kobo, (data.currency || 'NGN').toUpperCase()),
+        ref: ref,
+        // Reference-only deep link: no name/amount travel through it either.
+        deepLink: 'qwei://pay?r=' + encodeURIComponent(ref),
+        expiresUnix: expiresUnix
+      });
+    }).catch(function () {
+      showBad('Couldn\'t reach Qwei', 'The connection failed while checking this payment request. Check your network and try again.', true);
+    });
+  }
+
+  // ---- Legacy full-payload link (?v=1&r=…&n=…) still renders offline ----
+  function renderFromParams() {
+    var q = new URLSearchParams(window.location.search);
+    var v = q.get('v') || '', r = q.get('r') || '', n = q.get('n') || '',
+        a = q.get('a') || '', c = (q.get('c') || 'NGN').toUpperCase(), x = q.get('x') || '';
+    var name = decodeName(n).trim();
+    var valid = v === '1' && REF_RE.test(r) && name.length > 0;
+    if (!valid) { showBad('This payment request could not be read', 'The link may be damaged or out of date. Ask the sender to share their code again.', false); return; }
+    showOk({
+      name: name,
+      amountText: formatAmount(a, c),
+      ref: r,
+      deepLink: 'qwei://pay' + window.location.search,
+      expiresUnix: Number(x) || 0
+    });
+  }
+
+  renderStores();
+
+  var shortRef = pathReference();
+  if (!shortRef) {
+    // Query form without payload params can still be a reference-only link.
+    var rq = new URLSearchParams(window.location.search).get('r');
+    if (rq && REF_RE.test(rq) && !new URLSearchParams(window.location.search).get('n')) shortRef = rq;
+  }
+
+  if (shortRef) { resolveShortLink(shortRef); }
+  else { renderFromParams(); }
 })();
 </script>
 </body>

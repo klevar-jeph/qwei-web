@@ -7,6 +7,12 @@
 # A 200 rewrite (not a redirect) responds directly on the fetched URL.
 /.well-known/assetlinks.json /app-links.json 200
 
+# Apple Universal Links verification fetches
+# /.well-known/apple-app-site-association. Same dot-folder limitation, same
+# 200 rewrite. The placeholder file keeps the URL live — replace the
+# TEAMID appID with the real Apple Team ID before shipping iOS.
+/.well-known/apple-app-site-association /apple-app-site-association.json 200
+
 # Early app builds encoded links at the Supabase edge-function URL.
 # They are still legitimate Qwei payment links — serve the same page.
 /functions/v1/pay /pay/index.html 200
