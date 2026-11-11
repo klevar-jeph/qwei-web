@@ -25,4 +25,9 @@
 # unmatched /pay/ paths. One path segment via :ref matches exactly the
 # reference form. Query strings are preserved, so legacy
 # /pay?v=1&r=… links keep working too.
-/pay/:ref /pay/index.html 200
+#
+# The destination is the CANONICAL directory form (/pay/) on purpose:
+# pointing at /pay/index.html made Cloudflare issue its automatic
+# index.html → directory 308, which replaced the request path and
+# destroyed the {reference} before the page could read it.
+/pay/:ref /pay/ 200
