@@ -16,3 +16,10 @@
 # Early app builds encoded links at the Supabase edge-function URL.
 # They are still legitimate Qwei payment links — serve the same page.
 /functions/v1/pay /pay/index.html 200
+
+# Short opaque payment links (/pay/{reference}). The project has the SPA
+# fallback enabled (unmatched paths → index.html), which would otherwise
+# show the landing page instead of the payment request. Rewrite every
+# /pay/ subpath to the payment page — query strings are preserved, so
+# legacy /pay?v=1&r=… links keep working too.
+/pay/* /pay/index.html 200
