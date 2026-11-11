@@ -76,8 +76,14 @@ authenticated and re-validated by `create-payment-intent`.
    return JSON (placeholder appID is fine pre-launch).
 4. `https://qwei.pages.dev/pay?v=1&r=QWEI-SANITY-TEST&n=VGVzdA%3D%3D` — must
    render the payment-request preview card (status 200, no redirect loop).
-5. `https://qwei.pages.dev/pay/QWEI-NOSUCH-REFERENCE` — must render the
-   honest "could not be found" state (short link + lookup path).
+5. `https://qwei.pages.dev/pay/QWEI-NOSUCH-REFERENCE` — must serve the pay
+   page AT that URL (200, no redirect) and render the honest "could not be
+   found" state. NOTE: `404.html` exists on purpose — it disables SPA mode
+   (unmatched paths → landing page) and gives stray paths a real 404.
+6. `https://qwei.pages.dev/pay/:ref` is a 200-rewrite to `/pay/` — the
+   destination must stay in canonical directory form; pointing it at
+   `/pay/index.html` triggers Cloudflare's automatic index.html → `/pay/`
+   308, which strips the reference from the path.
 
 ## Important
 
