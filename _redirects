@@ -23,3 +23,6 @@
 # /pay/ subpath to the payment page — query strings are preserved, so
 # legacy /pay?v=1&r=… links keep working too.
 /pay/* /pay/index.html 200
+
+# TEMP probe
+/probe-xyz /privacy 200
